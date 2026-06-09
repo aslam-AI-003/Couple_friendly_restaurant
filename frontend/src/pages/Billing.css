@@ -537,7 +537,60 @@
 }
 
 @media (max-width: 768px) {
+  .billing-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+    gap: 16px;
+  }
   .menu-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    max-height: 350px;
+  }
+  .menu-item-card {
+    padding: 10px;
+  }
+  .menu-item-card img {
+    height: 80px;
+  }
+  .menu-item-card h4 {
+    font-size: 12px;
+  }
+  .category-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 8px;
+  }
+  .cat-tab {
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+  .cart-section {
+    max-height: 60vh;
+  }
+  .customer-info {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .payment-options {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .bill-actions {
+    flex-direction: column;
+  }
+  .bill-actions .btn {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .menu-item-card img {
+    height: 60px;
   }
 }

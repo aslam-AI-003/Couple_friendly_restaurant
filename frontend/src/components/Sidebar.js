@@ -36,6 +36,7 @@ const Sidebar = ({ isOpen, toggleSidebar, onLogout }) => {
             key={item.path}
             to={item.path}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            onClick={() => { if (window.innerWidth <= 768) toggleSidebar(); }}
           >
             <span className="nav-icon">{item.icon}</span>
             {isOpen && <span className="nav-label">{item.label}</span>}

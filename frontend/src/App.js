@@ -16,7 +16,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return localStorage.getItem('cf_logged_in') === 'true';
   });
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 768);
 
   const handleLogout = () => {
     localStorage.removeItem('cf_logged_in');
@@ -32,6 +32,13 @@ function App() {
     <OrderProvider>
     <Router>
       <div className="app">
+        {/* Mobile hamburger menu button */}
+        <button className="mobile-menu-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          {sidebarOpen ? '✕' : '☰'}
+        </button>
+        {/* Mobile overlay */}
+        <div className={`mobile-overlay ${sidebarOpen ? 'show' : ''}`} onClick={() => setSidebarOpen(false)}></div>
+        
         <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} onLogout={handleLogout} />
         <main className={`main-content ${sidebarOpen ? '' : 'expanded'}`}>
           <Routes>
