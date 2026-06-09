@@ -62,13 +62,13 @@ const Billing = () => {
     setShowPayment(true);
   };
 
-  const generateBill = () => {
+  const generateBill = async () => {
     if (!paymentMethod) {
       alert('Please select payment method!');
       return;
     }
     // Save order to context
-    const order = addOrder({
+    const order = await addOrder({
       customerName,
       customerMobile,
       items: cart.map(item => ({ id: item.id, name: item.name, price: item.price, qty: item.qty })),
@@ -77,7 +77,7 @@ const Billing = () => {
       gst,
       total
     });
-    setCurrentBillNo(order.billNo);
+    setCurrentBillNo(order.billNo || order.id || billNo);
     setShowPayment(false);
     setShowBill(true);
   };
