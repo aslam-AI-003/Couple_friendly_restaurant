@@ -1,0 +1,253 @@
+.menu-management {
+  animation: fadeIn 0.3s ease;
+}
+
+.menu-management .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: white;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius);
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-box:focus-within {
+  border-color: var(--primary);
+}
+
+.search-box svg {
+  color: var(--gray-400);
+}
+
+.search-box input {
+  border: none;
+  flex: 1;
+  font-size: 14px;
+}
+
+.menu-filters select {
+  padding: 10px 16px;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius);
+  font-size: 14px;
+  background: white;
+  min-width: 160px;
+}
+
+/* Menu Grid */
+.menu-mgmt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.menu-mgmt-card {
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.menu-mgmt-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.menu-mgmt-card.unavailable {
+  opacity: 0.6;
+}
+
+.mgmt-card-image {
+  height: 140px;
+  overflow: hidden;
+  position: relative;
+}
+
+.mgmt-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.menu-mgmt-card:hover .mgmt-card-image img {
+  transform: scale(1.05);
+}
+
+.veg-indicator {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.unavailable-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.mgmt-card-body {
+  padding: 14px;
+}
+
+.mgmt-card-body h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.mgmt-category {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-bottom: 10px;
+}
+
+.mgmt-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.mgmt-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.mgmt-stock {
+  font-size: 12px;
+  color: var(--gray-500);
+  background: var(--gray-100);
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+.mgmt-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.action-btn.edit {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.action-btn.edit:hover {
+  background: #1976d2;
+  color: white;
+}
+
+.action-btn.toggle {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.action-btn.toggle:hover {
+  background: #e65100;
+  color: white;
+}
+
+.action-btn.delete {
+  background: #fce4ec;
+  color: #c62828;
+}
+
+.action-btn.delete:hover {
+  background: #c62828;
+  color: white;
+}
+
+/* Modal Row */
+.modal-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.type-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.type-btn {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  background: white;
+  transition: all 0.2s;
+}
+
+.type-btn.active.veg {
+  border-color: #4caf50;
+  background: #e8f5e9;
+}
+
+.type-btn.active.nonveg {
+  border-color: #f44336;
+  background: #fce4ec;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.modal-actions .btn {
+  flex: 1;
+  justify-content: center;
+  padding: 12px;
+}
+
+@media (max-width: 768px) {
+  .menu-mgmt-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .menu-filters {
+    flex-direction: column;
+  }
+  .search-box {
+    max-width: 100%;
+  }
+}
