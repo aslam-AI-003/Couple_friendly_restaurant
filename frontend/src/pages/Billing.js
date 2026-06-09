@@ -67,17 +67,30 @@ const Billing = () => {
       alert('Please select payment method!');
       return;
     }
+    // Generate bill number first
+    const generatedBillNo = Math.floor(1000 + Math.random() * 9000);
+    setCurrentBillNo(generatedBillNo);
+    
     // Save order to context
-    const order = await addOrder({
-      customerName,
-      customerMobile,
-      items: cart.map(item => ({ id: item.id, name: item.name, price: item.price, qty: item.qty })),
-      paymentMethod,
-      subtotal,
-      gst,
-      total
-    });
-    setCurrentBillNo(order.billNo || order.id || billNo);
+    try {
+      const order = await addOrder({
+        customerName,
+        customerMobile,
+        items: cart.map(item => ({ id: item.id, name: item.name, price: item.price, qty: item.qty })),
+        paymentMethod,
+        subtotal,
+        gst,
+        total
+      });
+      // Update with Firebase bill number if available
+      if (order && order.billNo) {
+        setCurrentBillNo(order.billNo);
+      }
+    } catch (error) {
+      console.error('Order save error:', error);
+      // Bill number already set from generatedBillNo
+    }
+    
     setShowPayment(false);
     setShowBill(true);
   };
