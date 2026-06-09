@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { FiPlus, FiMinus, FiTrash2, FiPrinter, FiSend, FiUser, FiPhone } from 'react-icons/fi';
 import { useOrders } from '../context/OrderContext';
 import menuItems, { categories } from '../data/menuItems';
@@ -15,6 +15,7 @@ const Billing = () => {
   const [showBill, setShowBill] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentBillNo, setCurrentBillNo] = useState(null);
+  const billNoRef = useRef(null);
 
   const filteredItems = menuItems.filter(item => {
     const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
@@ -67,11 +68,14 @@ const Billing = () => {
       alert('Please select payment method!');
       return;
     }
-    // Generate bill number first
+    // Generate bill number IMMEDIATELY and store in ref for instant access
     const generatedBillNo = Math.floor(1000 + Math.random() * 9000);
+    billNoRef.current = generatedBillNo;
     setCurrentBillNo(generatedBillNo);
+    setShowPayment(false);
+    setShowBill(true);
     
-    // Save order to context
+    // Save order to Firebase in background
     try {
       const order = await addOrder({
         customerName,
@@ -80,19 +84,17 @@ const Billing = () => {
         paymentMethod,
         subtotal,
         gst,
-        total
+        total,
+        billNo: generatedBillNo
       });
-      // Update with Firebase bill number if available
+      // Update with Firebase sequential bill number if available
       if (order && order.billNo) {
+        billNoRef.current = order.billNo;
         setCurrentBillNo(order.billNo);
       }
     } catch (error) {
       console.error('Order save error:', error);
-      // Bill number already set from generatedBillNo
     }
-    
-    setShowPayment(false);
-    setShowBill(true);
   };
 
   const resetBilling = () => {
@@ -286,7 +288,7 @@ const Billing = () => {
               <div className="bill-header">
                 <img src="/logo.png" alt="Couple Friendly Hub" style={{width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', marginBottom: '8px'}} />
                 <h2>Couple Friendly Hub</h2>
-                <p>Bill No: #{currentBillNo}</p>
+                <p>Bill No: #{currentBillNo || billNoRef.current || billNo}</p>
                 <p>{new Date().toLocaleDateString('en-IN')} | {new Date().toLocaleTimeString('en-IN', {hour: '2-digit', minute: '2-digit'})}</p>
               </div>
               <div className="bill-customer">
@@ -320,7 +322,7 @@ const Billing = () => {
                 const billText = 
 `*🧾 Couple Friendly Hub*
 ━━━━━━━━━━━━━━━━
-Bill No: #${currentBillNo}
+Bill No: #${currentBillNo || billNoRef.current || billNo}
 Date: ${new Date().toLocaleDateString('en-IN')} | ${new Date().toLocaleTimeString('en-IN', {hour: '2-digit', minute: '2-digit'})}
 
 *Customer:* ${customerName}
