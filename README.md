@@ -1,126 +1,171 @@
-# 💕 Couple Friendly Hub - POS & Billing System
+# Couple Friendly Hub - POS & Billing System 🍽️
 
-A complete Restaurant POS (Point of Sale) and Billing Web Application for **Couple Friendly Hub**.
+A complete Point of Sale (POS) and billing system for Couple Friendly restaurant, built with React and Firebase, deployed on **Vercel**.
 
-## 🚀 Tech Stack
+## 🚀 Features
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | React.js with responsive UI |
-| **Backend** | Node.js + Express |
-| **Database** | Firebase Firestore |
-| **Authentication** | Firebase Auth |
-| **Printing** | Thermal Printer (58mm/80mm) |
-| **Notifications** | WhatsApp & SMS API |
+- **Dashboard** - Real-time overview of sales, orders, and analytics
+- **Billing** - Fast billing with menu items, GST calculation, and payment options
+- **Menu Management** - Add, edit, toggle availability of menu items
+- **Stock Management** - Track inventory with auto-deduction and low-stock alerts
+- **Reports** - Daily, weekly, and monthly reports
+- **Analytics** - Charts and insights on sales performance
+- **Expenses** - Track business expenses
+
+## 🏗️ Tech Stack
+
+- **Frontend**: React 18, React Router, Recharts, React Icons
+- **Backend**: Vercel Serverless Functions (API routes in `/api`)
+- **Database**: Firebase Firestore (real-time sync)
+- **Deployment**: Vercel
+- **PDF Generation**: jsPDF + html2canvas
 
 ## 📁 Project Structure
 
 ```
-couple-friendly/
-├── frontend/              # React.js Frontend
+├── api/                    # Vercel Serverless API Functions
+│   ├── health.js
+│   ├── orders/
+│   │   ├── index.js
+│   │   ├── today.js
+│   │   └── summary/daily.js
+│   ├── products/
+│   │   └── index.js
+│   ├── reports/
+│   │   ├── daily.js
+│   │   ├── weekly.js
+│   │   └── monthly.js
+│   └── stock/
+│       ├── index.js
+│       ├── low.js
+│       └── deduct.js
+├── frontend/               # React Frontend App
 │   ├── public/
 │   ├── src/
-│   │   ├── components/    # Reusable components (Sidebar)
-│   │   ├── pages/         # All pages (Dashboard, Billing, etc.)
-│   │   ├── data/          # Menu items data
-│   │   ├── firebase.js    # Firebase config
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── data/
+│   │   ├── pages/
+│   │   ├── firebase.js
 │   │   ├── App.js
 │   │   └── index.js
 │   └── package.json
-├── backend/               # Node.js Backend
-│   ├── routes/            # API routes
-│   │   ├── orders.js
-│   │   ├── products.js
-│   │   ├── reports.js
-│   │   └── stock.js
-│   ├── server.js
-│   ├── .env
-│   └── package.json
+├── backend/                # Legacy Express Backend (for local dev)
+├── vercel.json             # Vercel Configuration
+├── package.json
 └── README.md
 ```
 
-## 🎯 Modules
+## 🚀 Deploying to Vercel
 
-1. **Dashboard** - Today's sales, orders, cash/UPI collection, top items, low stock alerts
-2. **Customer Billing** - Menu selection, cart, payment, bill generation
-3. **Payment Screen** - Cash / UPI / Card options
-4. **Bill Printing** - Thermal printer output + PDF + WhatsApp
-5. **Menu Management** - Add/Edit/Delete/Hide menu items
-6. **Stock Management** - Raw material tracking, auto-deduction
-7. **Daily/Weekly/Monthly Reports** - Sales analytics
-8. **Analytics** - Top selling, least selling, peak hours, AI insights
+### Option 1: Deploy via GitHub (Recommended)
 
-## 🛠️ Setup Instructions
+1. **Push your code to GitHub**:
+   ```bash
+   git add .
+   git commit -m "Migrate to Vercel deployment"
+   git push origin main
+   ```
 
-### 1. Install Dependencies
+2. **Go to [vercel.com](https://vercel.com)** and sign up/log in
 
+3. **Import your GitHub repository**:
+   - Click "Add New" → "Project"
+   - Select your `Couple_friendly_restaurant` repository
+   - Vercel will auto-detect the configuration from `vercel.json`
+
+4. **Deploy** - Click "Deploy" and Vercel will:
+   - Build the React frontend from `/frontend`
+   - Deploy serverless API functions from `/api`
+   - Set up routing automatically
+
+### Option 2: Deploy via Vercel CLI
+
+1. **Install Vercel CLI**:
+   ```bash
+   npm install -g vercel
+   ```
+
+2. **Login to Vercel**:
+   ```bash
+   vercel login
+   ```
+
+3. **Deploy**:
+   ```bash
+   vercel
+   ```
+
+4. **Deploy to production**:
+   ```bash
+   vercel --prod
+   ```
+
+## 🔧 Local Development
+
+### Run Frontend:
 ```bash
-# Install frontend dependencies
 cd frontend
 npm install
-
-# Install backend dependencies
-cd ../backend
-npm install
+npm start
 ```
 
-### 2. Configure Firebase
-
-Update `frontend/src/firebase.js` with your Firebase project credentials.
-
-### 3. Run the Application
-
+### Run Backend (Express - for local dev):
 ```bash
-# Start frontend (port 3000)
-cd frontend
-npm start
-
-# Start backend (port 5000)
 cd backend
+npm install
 npm run dev
 ```
 
-## 📱 Features
+### Run Both (Concurrently):
+```bash
+npm run install:all
+npm run dev
+```
 
-- ✅ Responsive UI (Laptop + Tablet + Mobile)
-- ✅ Beautiful gradient-based classy design
-- ✅ Menu items with images
-- ✅ Category-wise menu filtering
-- ✅ Cart management with quantity controls
-- ✅ Payment method selection (Cash/UPI/Card)
-- ✅ Bill generation with receipt preview
-- ✅ Print & WhatsApp bill sharing
-- ✅ Stock auto-deduction on order
-- ✅ Low stock alerts
-- ✅ Daily, Weekly, Monthly reports
-- ✅ AI-powered analytics & insights
-- ✅ Admin & Staff role-based login
-- ✅ GST calculation support
+## 🌐 API Endpoints (Vercel Serverless)
 
-## 🍟 Menu Categories
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/health` | GET | Health check |
+| `/api/orders` | GET, POST | List/Create orders |
+| `/api/orders/today` | GET | Today's orders |
+| `/api/orders/summary/daily` | GET | Daily summary |
+| `/api/products` | GET, POST | List/Add products |
+| `/api/reports/daily` | GET | Daily report |
+| `/api/reports/weekly` | GET | Weekly report |
+| `/api/reports/monthly` | GET | Monthly report |
+| `/api/stock` | GET, POST | List/Add stock |
+| `/api/stock/low` | GET | Low stock alerts |
+| `/api/stock/deduct` | POST | Deduct stock |
 
-- Loaded Fries (Classic, Cheese, Veg, Chicken, Peri Peri)
-- Wraps (Paneer, Chicken, Egg, Veg)
-- Momos (Steamed, Fried, Tandoori - Veg & Non-Veg)
-- Mojito & Drinks (Mint, Blue Lagoon, Strawberry, Green Apple, Cold Coffee, Shakes)
-- Starters (Egg Lollipop, Chicken Lollipop, Paneer 65, Chicken 65)
-- Combos (Couple Combo 1 & 2, Friends Combo, Party Combo)
-- Sandwiches (Veg, Chicken, Club)
-- Burgers (Veg, Chicken, Double Chicken)
+## 🔥 Firebase Configuration
 
-## 🔮 Future Upgrades
+The app uses Firebase Firestore for real-time data. The Firebase configuration is in `frontend/src/firebase.js`. 
 
-- Kitchen Display System (KDS)
-- QR Code Table Ordering
-- AI Stock Prediction
-- Multi-branch Support
-- SaaS Model for other restaurants
+> **Note**: The main data operations (orders, products, stock) happen directly via the Firebase client SDK in the frontend. The `/api` serverless functions serve as optional API endpoints.
 
-## 💰 Budget Estimate
+## 📝 Environment Variables (Optional)
 
-- **MVP Version**: ₹20,000 – ₹40,000
-- **Professional Version**: ₹75,000 – ₹1.5 Lakhs
+If you want to use environment variables for Firebase config on Vercel:
 
----
+1. Go to your Vercel project → Settings → Environment Variables
+2. Add your Firebase config values:
+   - `REACT_APP_FIREBASE_API_KEY`
+   - `REACT_APP_FIREBASE_AUTH_DOMAIN`
+   - `REACT_APP_FIREBASE_PROJECT_ID`
+   - `REACT_APP_FIREBASE_STORAGE_BUCKET`
+   - `REACT_APP_FIREBASE_MESSAGING_SENDER_ID`
+   - `REACT_APP_FIREBASE_APP_ID`
 
-Made with ❤️ for Couple Friendly Hub
+## 📱 Mobile Responsive
+
+The app is fully responsive with a collapsible sidebar for mobile devices.
+
+## 🎯 Migration from Netlify to Vercel
+
+This project was migrated from Netlify to Vercel. Key changes:
+- Replaced `netlify.toml` with `vercel.json`
+- Converted Express backend routes to Vercel serverless functions (`/api` directory)
+- Removed `_redirects` file (Vercel handles rewrites via `vercel.json`)
+- SPA routing is configured via `rewrites` in `vercel.json`
