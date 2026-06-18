@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, setDoc, getDocs, query, orderBy, onSnapshot, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, doc, setDoc, getDocs, query, orderBy, onSnapshot, updateDoc, deleteDoc, getDoc, enableIndexedDbPersistence } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -16,6 +16,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+// Enable offline persistence - data will be stored locally and synced when online
+enableIndexedDbPersistence(db).then(() => {
+  console.log('✅ Firebase: Offline persistence enabled - app works without internet!');
+}).catch((err) => {
+  if (err.code === 'failed-precondition') {
+    console.warn('⚠️ Firebase: Multiple tabs open, persistence only works in one tab');
+  } else if (err.code === 'unimplemented') {
+    console.warn('⚠️ Firebase: Browser does not support offline persistence');
+  }
+});
 
 // Firestore Collections
 const ordersCollection = collection(db, 'cf_orders');
