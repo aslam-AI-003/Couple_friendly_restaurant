@@ -25,3 +25,10 @@ npm-debug.log*
 
 # Vercel
 .vercel
+# TWA APK build artifacts
+twa-apk/output/
+twa-apk/node_modules/
+twa-apk/couple-friendly-hub.apk
+twa-apk/couple-friendly-hub-unsigned.apk
+twa-apk/couple-friendly.keystore
+twa-apk/package-lock.json
