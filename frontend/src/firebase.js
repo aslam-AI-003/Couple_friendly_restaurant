@@ -3,13 +3,13 @@ import { getFirestore, collection, doc, setDoc, getDocs, query, orderBy, onSnaps
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA0h41dnLHhll9QebR4fkiaiG8C3cdo8Es",
-  authDomain: "abm-billing.firebaseapp.com",
-  projectId: "abm-billing",
-  storageBucket: "abm-billing.firebasestorage.app",
-  messagingSenderId: "774462936172",
-  appId: "1:774462936172:web:3312f7c3876aa09ba77449",
-  measurementId: "G-6ZN8GZYY8Q"
+  apiKey: "AIzaSyAcdQht1ihv_B26WK6xTyBv27OHYKF6-2E",
+  authDomain: "cf-restaurant.firebaseapp.com",
+  projectId: "cf-restaurant",
+  storageBucket: "cf-restaurant.firebasestorage.app",
+  messagingSenderId: "1094887658118",
+  appId: "1:1094887658118:web:eb873902aa1fe3fba7f707",
+  measurementId: "G-QKZMZG22T3"
 };
 
 // Initialize Firebase
