@@ -47,8 +47,7 @@ const Billing = () => {
   };
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-  const gst = Math.round(subtotal * 0.05);
-  const total = subtotal + gst;
+  const total = subtotal;
 
   const handlePayment = () => {
     if (!customerName || !customerMobile) {
@@ -81,7 +80,6 @@ const Billing = () => {
         items: cart.map(item => ({ id: item.id, name: item.name, price: item.price, qty: item.qty })),
         paymentMethod,
         subtotal,
-        gst,
         total
       });
       // Update with professional bill number from Firebase
@@ -234,14 +232,6 @@ const Billing = () => {
             {/* Cart Summary */}
             {cart.length > 0 && (
               <div className="cart-summary">
-                <div className="summary-row">
-                  <span>Subtotal</span>
-                  <span>₹{subtotal}</span>
-                </div>
-                <div className="summary-row">
-                  <span>GST (5%)</span>
-                  <span>₹{gst}</span>
-                </div>
                 <div className="summary-row total">
                   <span>Total</span>
                   <span>₹{total}</span>
@@ -310,13 +300,13 @@ const Billing = () => {
               </div>
               <div className="bill-divider">- - - - - - - - - - - - - - - -</div>
               <div className="bill-total">
-                <p>Subtotal: ₹{subtotal}</p>
-                <p>GST (5%): ₹{gst}</p>
                 <h3>Total: ₹{total}</h3>
                 <p>Payment: {paymentMethod}</p>
               </div>
               <div className="bill-divider">- - - - - - - - - - - - - - - -</div>
               <p className="bill-thanks">Thank you! Visit Again 💕</p>
+              <p style={{fontSize: '11px', color: '#888', margin: '4px 0'}}>📍 Chennai Food Town, Perungudi</p>
+              <p style={{fontSize: '11px', color: '#888', margin: '4px 0'}}>📞 6369084919</p>
             </div>
             <div className="bill-actions">
               <button className="btn btn-primary" onClick={() => window.print()}>
@@ -334,14 +324,13 @@ Date: ${new Date().toLocaleDateString('en-IN')} | ${new Date().toLocaleTimeStrin
 ━━━━━━━━━━━━━━━━
 ${cart.map(item => `${item.name} x${item.qty} = ₹${item.price * item.qty}`).join('\n')}
 ━━━━━━━━━━━━━━━━
-Subtotal: ₹${subtotal}
-GST (5%): ₹${gst}
 *Total: ₹${total}*
 Payment: ${paymentMethod}
 ━━━━━━━━━━━━━━━━
 _Thank you for visiting!_ 💕
 _Visit Again - Couple Friendly Hub_
-📍 Chennai Food Street, Perungudi`;
+📍 Chennai Food Town, Perungudi
+📞 6369084919`;
                 const encodedMsg = encodeURIComponent(billText);
                 const customerNum = customerMobile.startsWith('91') ? customerMobile : '91' + customerMobile;
                 window.open(`https://wa.me/${customerNum}?text=${encodedMsg}`, '_blank');
