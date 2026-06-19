@@ -3,51 +3,7 @@ import { FiPackage, FiAlertTriangle, FiPlus, FiMinus } from 'react-icons/fi';
 import './StockManagement.css';
 
 const StockManagement = () => {
-  const [stockItems, setStockItems] = useState([
-    // Fries related
-    { id: 1, name: 'Frozen French Fries', category: 'Fries', quantity: 20, unit: 'KG', minStock: 10, perItemUsage: '150gm' },
-    { id: 2, name: 'Cheese Sauce', category: 'Fries', quantity: 8, unit: 'KG', minStock: 5, perItemUsage: '30gm' },
-    { id: 3, name: 'Peri Peri Seasoning', category: 'Fries', quantity: 3, unit: 'KG', minStock: 2, perItemUsage: '5gm' },
-    { id: 4, name: 'Chicken Chunks (Fries)', category: 'Fries', quantity: 10, unit: 'KG', minStock: 5, perItemUsage: '50gm' },
-    // Wraps related
-    { id: 5, name: 'Tortilla Wraps', category: 'Wraps & Rolls', quantity: 100, unit: 'pcs', minStock: 50, perItemUsage: '1 pc' },
-    { id: 6, name: 'Paneer Block', category: 'Wraps & Rolls', quantity: 5, unit: 'KG', minStock: 3, perItemUsage: '80gm' },
-    { id: 7, name: 'Mayonnaise', category: 'Wraps & Rolls', quantity: 5, unit: 'KG', minStock: 3, perItemUsage: '20gm' },
-    { id: 8, name: 'Chicken (Wraps)', category: 'Wraps & Rolls', quantity: 8, unit: 'KG', minStock: 4, perItemUsage: '60gm' },
-    // Crispy Snacks
-    { id: 9, name: 'Veg Nuggets (Frozen)', category: 'Crispy Snacks', quantity: 200, unit: 'pcs', minStock: 100, perItemUsage: '6 pcs' },
-    { id: 10, name: 'Chicken Popcorn (Frozen)', category: 'Crispy Snacks', quantity: 10, unit: 'KG', minStock: 5, perItemUsage: '100gm' },
-    { id: 11, name: 'Chicken Strips (Frozen)', category: 'Crispy Snacks', quantity: 150, unit: 'pcs', minStock: 80, perItemUsage: '4 pcs' },
-    { id: 12, name: 'Crab Meat', category: 'Crispy Snacks', quantity: 3, unit: 'KG', minStock: 2, perItemUsage: '50gm' },
-    // Momos
-    { id: 13, name: 'Frozen Veg Momos', category: "Momo's", quantity: 500, unit: 'pcs', minStock: 200, perItemUsage: '6 pcs' },
-    { id: 14, name: 'Frozen Paneer Momos', category: "Momo's", quantity: 300, unit: 'pcs', minStock: 150, perItemUsage: '6 pcs' },
-    { id: 15, name: 'Frozen Chicken Momos', category: "Momo's", quantity: 400, unit: 'pcs', minStock: 150, perItemUsage: '6 pcs' },
-    { id: 16, name: 'Schezwan Sauce (Momos)', category: "Momo's", quantity: 5, unit: 'Litre', minStock: 2, perItemUsage: '20ml' },
-    // Cool Drinks
-    { id: 17, name: 'Mint Leaves', category: 'Cool Drinks', quantity: 3, unit: 'KG', minStock: 2, perItemUsage: '10gm' },
-    { id: 18, name: 'Lemon', category: 'Cool Drinks', quantity: 10, unit: 'KG', minStock: 5, perItemUsage: '1 pc' },
-    { id: 19, name: 'Sugar Syrup', category: 'Cool Drinks', quantity: 10, unit: 'Litre', minStock: 5, perItemUsage: '30ml' },
-    { id: 20, name: 'Soda Water', category: 'Cool Drinks', quantity: 50, unit: 'Litre', minStock: 20, perItemUsage: '200ml' },
-    { id: 21, name: 'Blue Curacao Syrup', category: 'Cool Drinks', quantity: 3, unit: 'Litre', minStock: 2, perItemUsage: '30ml' },
-    { id: 22, name: 'Watermelon', category: 'Cool Drinks', quantity: 10, unit: 'KG', minStock: 5, perItemUsage: '100gm' },
-    { id: 23, name: 'Iced Tea Premix', category: 'Cool Drinks', quantity: 5, unit: 'KG', minStock: 2, perItemUsage: '15gm' },
-    { id: 24, name: 'Coffee Powder', category: 'Cool Drinks', quantity: 2, unit: 'KG', minStock: 1, perItemUsage: '10gm' },
-    // Egg/Maggie
-    { id: 25, name: 'Maggi Noodles Packs', category: 'Egg/Maggie', quantity: 200, unit: 'pcs', minStock: 100, perItemUsage: '1 pc' },
-    { id: 26, name: 'Eggs', category: 'Egg/Maggie', quantity: 300, unit: 'pcs', minStock: 100, perItemUsage: '2 pcs' },
-    { id: 27, name: 'Chicken (Maggie)', category: 'Egg/Maggie', quantity: 5, unit: 'KG', minStock: 3, perItemUsage: '50gm' },
-    // Sweet Corn
-    { id: 28, name: 'Sweet Corn Kernels', category: 'Sweet Corn', quantity: 15, unit: 'KG', minStock: 8, perItemUsage: '100gm' },
-    { id: 29, name: 'Butter', category: 'Sweet Corn', quantity: 3, unit: 'KG', minStock: 2, perItemUsage: '10gm' },
-    { id: 30, name: 'Cheese Powder', category: 'Sweet Corn', quantity: 2, unit: 'KG', minStock: 1, perItemUsage: '10gm' },
-    // General
-    { id: 31, name: 'Cooking Oil', category: 'General', quantity: 20, unit: 'Litre', minStock: 10, perItemUsage: '50ml' },
-    { id: 32, name: 'Salt', category: 'General', quantity: 5, unit: 'KG', minStock: 2, perItemUsage: '5gm' },
-    { id: 33, name: 'Packaging Boxes', category: 'General', quantity: 500, unit: 'pcs', minStock: 200, perItemUsage: '1 pc' },
-    { id: 34, name: 'Tissue Paper Rolls', category: 'General', quantity: 50, unit: 'pcs', minStock: 20, perItemUsage: '2 sheets' },
-    { id: 35, name: 'Disposable Glasses', category: 'General', quantity: 300, unit: 'pcs', minStock: 100, perItemUsage: '1 pc' },
-  ]);
+  const [stockItems, setStockItems] = useState([]);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showManualEntry, setShowManualEntry] = useState(false);

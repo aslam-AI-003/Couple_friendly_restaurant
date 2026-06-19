@@ -5,18 +5,7 @@ import autoTable from 'jspdf-autotable';
 import './Expenses.css';
 
 const Expenses = () => {
-  const [expenses, setExpenses] = useState([
-    { id: 1, date: '2026-06-09', category: 'Raw Materials', description: 'Frozen Fries - 20KG', amount: 2400, paymentMode: 'Cash' },
-    { id: 2, date: '2026-06-09', category: 'Raw Materials', description: 'Cooking Oil - 10L', amount: 1800, paymentMode: 'UPI' },
-    { id: 3, date: '2026-06-09', category: 'Staff Salary', description: 'Chef - Ravi (June)', amount: 15000, paymentMode: 'Bank Transfer' },
-    { id: 4, date: '2026-06-08', category: 'Rent', description: 'Shop Rent - June', amount: 25000, paymentMode: 'Bank Transfer' },
-    { id: 5, date: '2026-06-08', category: 'Utilities', description: 'Electricity Bill', amount: 4500, paymentMode: 'UPI' },
-    { id: 6, date: '2026-06-08', category: 'Raw Materials', description: 'Chicken - 15KG', amount: 3750, paymentMode: 'Cash' },
-    { id: 7, date: '2026-06-07', category: 'Packaging', description: 'Boxes & Glasses', amount: 1200, paymentMode: 'Cash' },
-    { id: 8, date: '2026-06-07', category: 'Marketing', description: 'Instagram Ads', amount: 2000, paymentMode: 'UPI' },
-    { id: 9, date: '2026-06-07', category: 'Maintenance', description: 'AC Repair', amount: 3000, paymentMode: 'Cash' },
-    { id: 10, date: '2026-06-06', category: 'Raw Materials', description: 'Momos, Corn, Eggs', amount: 5500, paymentMode: 'Cash' },
-  ]);
+  const [expenses, setExpenses] = useState([]);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [newExpense, setNewExpense] = useState({

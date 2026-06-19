@@ -62,11 +62,7 @@ const Dashboard = () => {
     },
   ];
 
-  const lowStockItems = [
-    { name: 'Frozen Fries', current: '3 KG', min: '10 KG' },
-    { name: 'Mint Leaves', current: '500 gm', min: '2 KG' },
-    { name: 'Cheese Slices', current: '20 pcs', min: '50 pcs' },
-  ];
+  const lowStockItems = [];
 
   // Format time ago
   const timeAgo = (dateStr) => {

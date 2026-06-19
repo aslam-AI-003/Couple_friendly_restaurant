@@ -86,28 +86,14 @@ const Analytics = () => {
   };
 
   // Top selling items
-  const topSelling = hasRealData
-    ? sortedByOrders.slice(0, 6).map((item, idx) => ({
-        rank: idx + 1, name: item.name, orders: item.orders,
-        revenue: item.revenue, image: getItemImage(item.name),
-        percentage: Math.round(item.orders / totalItemsSold * 100)
-      }))
-    : [
-        { rank: 1, name: 'Chicken Loaded Fries', orders: 456, revenue: 63384, image: getItemImage('Chicken Loaded Fries'), percentage: 25 },
-        { rank: 2, name: 'Mint Mojito', orders: 389, revenue: 22951, image: getItemImage('Mint Mojito'), percentage: 21 },
-        { rank: 3, name: 'Veg Momos (Steamed/Fried)', orders: 320, revenue: 28480, image: getItemImage('Veg Momos (Steamed/Fried)'), percentage: 17 },
-        { rank: 4, name: 'Cheese Loaded Fries', orders: 298, revenue: 29502, image: getItemImage('Cheese Loaded Fries'), percentage: 16 },
-        { rank: 5, name: 'Spicy Chicken Wrap', orders: 267, revenue: 39783, image: getItemImage('Spicy Chicken Wrap'), percentage: 14 },
-        { rank: 6, name: 'Blue Lagoon Mojito', orders: 234, revenue: 16146, image: getItemImage('Blue Lagoon Mojito'), percentage: 12 },
-      ];
+  const topSelling = sortedByOrders.slice(0, 6).map((item, idx) => ({
+    rank: idx + 1, name: item.name, orders: item.orders,
+    revenue: item.revenue, image: getItemImage(item.name),
+    percentage: Math.round(item.orders / totalItemsSold * 100)
+  }));
 
   // Least selling
-  const leastSelling = hasRealData
-    ? sortedByOrders.slice(-4).reverse().map(item => ({ name: item.name, orders: item.orders, image: getItemImage(item.name) }))
-    : [
-        { name: 'Cold Coffee', orders: 23, image: getItemImage('Cold Coffee') },
-        { name: 'Egg Lollipop', orders: 31, image: getItemImage('Egg Lollipop') },
-      ];
+  const leastSelling = sortedByOrders.slice(-4).reverse().map(item => ({ name: item.name, orders: item.orders, image: getItemImage(item.name) }));
 
   // Hourly heatmap data (24 hours)
   const heatmapData = Array.from({length: 24}, (_, i) => ({
@@ -130,7 +116,7 @@ const Analytics = () => {
     <div className="analytics-redesign">
       <div className="page-header">
         <h1>Analytics</h1>
-        <p>Business insights & performance {hasRealData ? '(Live Data)' : '(Sample Data)'}</p>
+        <p>Business insights & performance {hasRealData ? '(Live Data)' : '(No data yet - start billing!)'}</p>
       </div>
 
       {/* KPI Cards */}
@@ -139,7 +125,7 @@ const Analytics = () => {
           <div className="kpi-icon"><FiDollarSign /></div>
           <div className="kpi-info">
             <p className="kpi-label">Total Revenue</p>
-            <h3 className="kpi-value">₹{hasRealData ? totalRevenue.toLocaleString('en-IN') : '4,25,000'}</h3>
+            <h3 className="kpi-value">₹{totalRevenue.toLocaleString('en-IN')}</h3>
             {revenueChange !== 0 && <span className={`kpi-change ${revenueChange >= 0 ? 'up' : 'down'}`}>{revenueChange >= 0 ? '↑' : '↓'} {Math.abs(revenueChange)}% vs yesterday</span>}
           </div>
         </div>
@@ -147,7 +133,7 @@ const Analytics = () => {
           <div className="kpi-icon"><FiShoppingBag /></div>
           <div className="kpi-info">
             <p className="kpi-label">Total Orders</p>
-            <h3 className="kpi-value">{hasRealData ? totalOrders : '3,820'}</h3>
+            <h3 className="kpi-value">{totalOrders}</h3>
             <span className="kpi-sub">Today: {todayOrders.length}</span>
           </div>
         </div>
@@ -155,7 +141,7 @@ const Analytics = () => {
           <div className="kpi-icon"><FiTarget /></div>
           <div className="kpi-info">
             <p className="kpi-label">Avg Order Value</p>
-            <h3 className="kpi-value">₹{hasRealData ? avgOrderValue : '111'}</h3>
+            <h3 className="kpi-value">₹{avgOrderValue}</h3>
             <span className="kpi-sub">{totalItemsSold || 0} items sold</span>
           </div>
         </div>
