@@ -7,7 +7,7 @@ export const useOrders = () => useContext(OrderContext);
 
 export const OrderProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
-  const [orderCounter, setOrderCounter] = useState(1020);
+  const [lastOrderId, setLastOrderId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   // Load orders from Firebase on mount and listen for real-time updates
@@ -18,11 +18,6 @@ export const OrderProvider = ({ children }) => {
       console.log('🔥 Orders updated from Firebase:', firebaseOrders.length);
     });
 
-    // Get the current order counter
-    CoupleDB.getNextOrderNumber().then(num => {
-      setOrderCounter(num - 1); // Set to last used number
-    });
-
     return () => {
       if (unsubscribe) unsubscribe();
     };
@@ -30,13 +25,14 @@ export const OrderProvider = ({ children }) => {
 
   const addOrder = async (order) => {
     try {
-      const newCounter = await CoupleDB.getNextOrderNumber();
-      setOrderCounter(newCounter);
+      // Get professional order ID: CF-MMDD-XXX
+      const orderId = await CoupleDB.getNextOrderNumber();
+      setLastOrderId(orderId);
       
       const newOrder = {
         ...order,
-        id: newCounter,
-        billNo: newCounter,
+        id: orderId,
+        billNo: orderId,
         createdAt: new Date().toISOString(),
         status: 'completed'
       };
@@ -44,17 +40,21 @@ export const OrderProvider = ({ children }) => {
       // Save to Firebase - the real-time listener will auto-update the orders state
       await CoupleDB.saveOrder(newOrder);
       
-      console.log('✅ Order created and saved to Firebase:', newCounter);
+      console.log('✅ Order created and saved to Firebase:', orderId);
       return newOrder;
     } catch (error) {
       console.error('❌ Error creating order:', error);
-      // Fallback: add to local state if Firebase fails
-      const fallbackCounter = orderCounter + 1;
-      setOrderCounter(fallbackCounter);
+      // Fallback: generate local order ID
+      const now = new Date();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const sec = String(now.getSeconds()).padStart(3, '0');
+      const fallbackId = `CF-${mm}${dd}-${sec}`;
+      setLastOrderId(fallbackId);
       const newOrder = {
         ...order,
-        id: fallbackCounter,
-        billNo: fallbackCounter,
+        id: fallbackId,
+        billNo: fallbackId,
         createdAt: new Date().toISOString(),
         status: 'completed'
       };
@@ -117,7 +117,7 @@ export const OrderProvider = ({ children }) => {
       getTodayCard,
       getTopSellingItem,
       getRecentOrders,
-      orderCounter,
+      lastOrderId,
       isLoading
     }}>
       {children}

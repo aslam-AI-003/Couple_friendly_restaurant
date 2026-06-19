@@ -164,7 +164,7 @@ const Dashboard = () => {
                 <tbody>
                   {recentOrders.map((order, index) => (
                     <tr key={index}>
-                      <td><strong>#{order.billNo}</strong></td>
+                      <td><strong>{order.billNo}</strong></td>
                       <td>{order.customerName}</td>
                       <td>{order.items.length} items</td>
                       <td><strong>₹{order.total}</strong></td>

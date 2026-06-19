@@ -85,26 +85,47 @@ export const CoupleDB = {
     );
   },
 
-  // Get next order number
+  // Get next order number - Format: CF-MMDD-XXX (resets daily)
   async getNextOrderNumber() {
     try {
+      const today = new Date();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      const todayStr = `${mm}${dd}`;
+      
       const counterDoc = await getDoc(doc(db, 'cf_config', 'counter'));
-      let nextNum = 1021;
+      let dailyCount = 1;
       
       if (counterDoc.exists()) {
-        nextNum = counterDoc.data().lastOrderNumber + 1;
+        const data = counterDoc.data();
+        // Check if it's the same day - if not, reset counter
+        if (data.lastDate === todayStr) {
+          dailyCount = (data.dailyCount || 0) + 1;
+        } else {
+          dailyCount = 1; // Reset for new day
+        }
       }
       
-      // Update counter
+      // Update counter in Firebase
       await setDoc(doc(db, 'cf_config', 'counter'), {
-        lastOrderNumber: nextNum,
+        lastDate: todayStr,
+        dailyCount: dailyCount,
         updatedAt: new Date().toISOString()
       });
       
-      return nextNum;
+      // Generate the professional order ID: CF-0619-001
+      const orderNumber = String(dailyCount).padStart(3, '0');
+      const orderId = `CF-${todayStr}-${orderNumber}`;
+      
+      return orderId;
     } catch (error) {
       console.error('❌ Error getting next order number:', error);
-      return Date.now() % 10000 + 1000;
+      // Fallback: generate based on timestamp
+      const now = new Date();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const fallback = String(now.getSeconds()).padStart(3, '0');
+      return `CF-${mm}${dd}-${fallback}`;
     }
   },
 
