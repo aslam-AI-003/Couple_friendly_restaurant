@@ -290,3 +290,104 @@
     font-size: 20px;
   }
 }
+
+/* ===== NETWORK STATUS BANNER ===== */
+.network-banner {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  animation: slideDown 0.3s ease;
+}
+
+.network-banner.offline {
+  background: linear-gradient(135deg, #ff1744, #d50000);
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 23, 68, 0.3);
+}
+
+.network-banner.online {
+  background: linear-gradient(135deg, #00c853, #2e7d32);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3);
+  animation: slideDown 0.3s ease, fadeOut 0.5s ease 2.5s forwards;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* ===== OFFLINE POPUP MODAL ===== */
+.offline-modal {
+  max-width: 400px !important;
+  text-align: center;
+}
+
+.offline-popup-content {
+  padding: 10px 0;
+}
+
+.offline-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff1744, #d50000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  animation: pulse 1.5s ease infinite;
+}
+
+.offline-icon svg {
+  width: 36px;
+  height: 36px;
+  color: white;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.offline-modal h2 {
+  color: #d50000;
+  margin-bottom: 8px;
+}
+
+.offline-message {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.offline-info {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 14px;
+  text-align: left;
+}
+
+.offline-info p {
+  font-size: 13px;
+  color: #444;
+  margin: 6px 0;
+}

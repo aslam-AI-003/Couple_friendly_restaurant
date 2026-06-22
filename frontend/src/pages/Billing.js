@@ -1,11 +1,13 @@
 import React, { useState, useRef } from 'react';
-import { FiPlus, FiMinus, FiTrash2, FiPrinter, FiSend, FiUser, FiPhone } from 'react-icons/fi';
+import { FiPlus, FiMinus, FiTrash2, FiPrinter, FiSend, FiUser, FiPhone, FiWifiOff } from 'react-icons/fi';
 import { useOrders } from '../context/OrderContext';
+import useNetworkStatus from '../hooks/useNetworkStatus';
 import menuItems, { categories } from '../data/menuItems';
 import './Billing.css';
 
 const Billing = () => {
   const { addOrder } = useOrders();
+  const { isOnline } = useNetworkStatus();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [cart, setCart] = useState([]);
   const [customerName, setCustomerName] = useState('');
@@ -15,6 +17,8 @@ const Billing = () => {
   const [showBill, setShowBill] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentBillNo, setCurrentBillNo] = useState(null);
+  const [showOfflinePopup, setShowOfflinePopup] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const billNoRef = useRef(null);
 
   const filteredItems = menuItems.filter(item => {
@@ -66,36 +70,59 @@ const Billing = () => {
       alert('Please select payment method!');
       return;
     }
+
+    // ❌ Block if no internet
+    if (!navigator.onLine) {
+      setShowPayment(false);
+      setShowOfflinePopup(true);
+      return;
+    }
     
     setShowPayment(false);
     setShowBill(true);
+    setIsGenerating(true);
     billNoRef.current = 'Generating...';
     setCurrentBillNo('Generating...');
     
-    // Save order to Firebase and get professional order ID (CF-MMDD-XXX)
+    // Save order to Firebase with timeout protection
     try {
-      const order = await addOrder({
-        customerName,
-        customerMobile,
-        items: cart.map(item => ({ id: item.id, name: item.name, price: item.price, qty: item.qty })),
-        paymentMethod,
-        subtotal,
-        total
-      });
+      // Create a timeout promise (15 seconds max)
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Network timeout - connection too slow')), 15000)
+      );
+
+      // Race between order creation and timeout
+      const order = await Promise.race([
+        addOrder({
+          customerName,
+          customerMobile,
+          items: cart.map(item => ({ id: item.id, name: item.name, price: item.price, qty: item.qty })),
+          paymentMethod,
+          subtotal,
+          total
+        }),
+        timeoutPromise
+      ]);
+
       // Update with professional bill number from Firebase
       if (order && order.billNo) {
         billNoRef.current = order.billNo;
         setCurrentBillNo(order.billNo);
       }
+      setIsGenerating(false);
     } catch (error) {
       console.error('Order save error:', error);
-      // Fallback bill number
-      const now = new Date();
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      const dd = String(now.getDate()).padStart(2, '0');
-      const fallback = `CF-${mm}${dd}-000`;
-      billNoRef.current = fallback;
-      setCurrentBillNo(fallback);
+      setIsGenerating(false);
+      
+      // If timeout or network error, show offline popup and hide bill
+      if (error.message.includes('timeout') || error.message.includes('network') || !navigator.onLine) {
+        setShowBill(false);
+        setShowOfflinePopup(true);
+      } else {
+        // Other Firebase errors - show bill with error note
+        billNoRef.current = 'Error - Retry';
+        setCurrentBillNo('Error - Retry');
+      }
     }
   };
 
@@ -270,6 +297,42 @@ const Billing = () => {
             <button className="btn btn-success" style={{width: '100%', marginTop: '20px'}} onClick={generateBill}>
               Generate Bill
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Offline Popup */}
+      {showOfflinePopup && (
+        <div className="modal-overlay" onClick={() => setShowOfflinePopup(false)}>
+          <div className="modal offline-modal" onClick={e => e.stopPropagation()}>
+            <div className="offline-popup-content">
+              <div className="offline-icon">
+                <FiWifiOff />
+              </div>
+              <h2>No Internet Connection</h2>
+              <p className="offline-message">
+                Unable to generate bill because the device is offline. 
+                Please check your WiFi or mobile data connection.
+              </p>
+              <div className="offline-info">
+                <p>✅ Your cart items are safe — nothing is lost</p>
+                <p>✅ Customer details are preserved</p>
+                <p>⏳ Try again when connection is restored</p>
+              </div>
+              <button 
+                className="btn btn-primary" 
+                style={{width: '100%', marginTop: '16px'}}
+                onClick={() => {
+                  setShowOfflinePopup(false);
+                  if (navigator.onLine) {
+                    // Connection is back, allow retry
+                    setShowPayment(true);
+                  }
+                }}
+              >
+                {navigator.onLine ? '✅ Connection Restored — Retry' : '❌ Close & Check Connection'}
+              </button>
+            </div>
           </div>
         </div>
       )}

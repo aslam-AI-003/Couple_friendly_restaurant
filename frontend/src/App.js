@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { OrderProvider } from './context/OrderContext';
+import useNetworkStatus from './hooks/useNetworkStatus';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import Billing from './pages/Billing';
@@ -13,6 +14,7 @@ import Login from './pages/Login';
 import './App.css';
 
 function App() {
+  const { isOnline, showReconnected } = useNetworkStatus();
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return localStorage.getItem('cf_logged_in') === 'true';
   });
@@ -41,6 +43,17 @@ function App() {
         
         <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} onLogout={handleLogout} />
         <main className={`main-content ${sidebarOpen ? '' : 'expanded'}`}>
+          {/* Network Status Banner */}
+          {!isOnline && (
+            <div className="network-banner offline">
+              <span>🔴 No Internet Connection — Billing is paused until connection is restored</span>
+            </div>
+          )}
+          {showReconnected && isOnline && (
+            <div className="network-banner online">
+              <span>✅ Back Online! You can continue billing.</span>
+            </div>
+          )}
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/billing" element={<Billing />} />
