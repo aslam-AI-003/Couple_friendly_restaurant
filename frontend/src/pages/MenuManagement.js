@@ -98,14 +98,30 @@ const MenuManagement = () => {
   };
 
   const handleUpdate = async () => {
-    const updatedItem = { ...newItem, price: Number(newItem.price), stock: Number(newItem.stock) };
+    const updatedItem = { 
+      ...editItem,
+      ...newItem, 
+      id: editItem.id,
+      price: Number(newItem.price), 
+      stock: Number(newItem.stock) 
+    };
     setItems(items.map(i => i.id === editItem.id ? updatedItem : i));
     setEditItem(null);
     setNewItem({ name: '', category: 'Loaded Fries', price: '', stock: '', description: '', image: '', isVeg: true });
     setShowAddModal(false);
     // Save updated item to Firebase
-    await CoupleDB.saveProduct(updatedItem);
-    console.log('✅ Item updated and saved to Firebase:', updatedItem.name, '₹' + updatedItem.price);
+    try {
+      const result = await CoupleDB.saveProduct(updatedItem);
+      if (result) {
+        console.log('✅ Item updated and saved to Firebase:', updatedItem.name, '₹' + updatedItem.price);
+      } else {
+        console.error('❌ Failed to save product update to Firebase');
+        alert('⚠️ Price updated locally but failed to save online. Please check internet and try again.');
+      }
+    } catch (error) {
+      console.error('❌ Error saving product:', error);
+      alert('⚠️ Network error - price change may not persist after refresh.');
+    }
   };
 
   return (
