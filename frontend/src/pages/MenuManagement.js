@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiPlus, FiEdit2, FiTrash2, FiEye, FiEyeOff, FiSearch } from 'react-icons/fi';
 import menuItems, { categories } from '../data/menuItems';
+import { CoupleDB } from '../firebase';
 import './MenuManagement.css';
 
 const MenuManagement = () => {
@@ -9,9 +10,43 @@ const MenuManagement = () => {
   const [editItem, setEditItem] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('All');
+  const [isLoading, setIsLoading] = useState(true);
   const [newItem, setNewItem] = useState({
     name: '', category: 'Loaded Fries', price: '', stock: '', description: '', image: '', isVeg: true
   });
+
+  // Load menu from Firebase on mount - merge with defaults
+  useEffect(() => {
+    const loadMenu = async () => {
+      try {
+        const savedProducts = await CoupleDB.getAllProducts();
+        if (savedProducts.length > 0) {
+          // Create a map of saved products by ID for quick lookup
+          const savedMap = {};
+          savedProducts.forEach(p => { savedMap[p.id] = p; });
+          
+          // Merge: use saved data if available, otherwise use default
+          const mergedItems = menuItems.map(defaultItem => {
+            if (savedMap[defaultItem.id]) {
+              return { ...defaultItem, ...savedMap[defaultItem.id] };
+            }
+            return defaultItem;
+          });
+          
+          // Add any custom items that don't exist in defaults
+          const defaultIds = new Set(menuItems.map(i => i.id));
+          const customItems = savedProducts.filter(p => !defaultIds.has(p.id));
+          
+          setItems([...mergedItems, ...customItems]);
+        }
+      } catch (error) {
+        console.error('Error loading menu from Firebase:', error);
+        // Fallback to default menuItems (already set)
+      }
+      setIsLoading(false);
+    };
+    loadMenu();
+  }, []);
 
   const filteredItems = items.filter(item => {
     const matchesCategory = filterCategory === 'All' || item.category === filterCategory;
@@ -19,7 +54,7 @@ const MenuManagement = () => {
     return matchesCategory && matchesSearch;
   });
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!newItem.name || !newItem.price) return;
     const item = {
       ...newItem,
@@ -31,16 +66,29 @@ const MenuManagement = () => {
     setItems([...items, item]);
     setNewItem({ name: '', category: 'Loaded Fries', price: '', stock: '', description: '', image: '', isVeg: true });
     setShowAddModal(false);
+    // Save to Firebase
+    await CoupleDB.saveProduct(item);
+    console.log('✅ New item added and saved to Firebase:', item.name);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this item?')) {
       setItems(items.filter(i => i.id !== id));
+      // Delete from Firebase
+      await CoupleDB.deleteProduct(id);
+      console.log('✅ Item deleted from Firebase:', id);
     }
   };
 
-  const toggleAvailability = (id) => {
-    setItems(items.map(i => i.id === id ? { ...i, isAvailable: !i.isAvailable } : i));
+  const toggleAvailability = async (id) => {
+    const updatedItems = items.map(i => i.id === id ? { ...i, isAvailable: !i.isAvailable } : i);
+    setItems(updatedItems);
+    // Save updated item to Firebase
+    const updatedItem = updatedItems.find(i => i.id === id);
+    if (updatedItem) {
+      await CoupleDB.saveProduct(updatedItem);
+      console.log('✅ Availability toggled and saved:', updatedItem.name, updatedItem.isAvailable);
+    }
   };
 
   const handleEdit = (item) => {
@@ -49,11 +97,15 @@ const MenuManagement = () => {
     setShowAddModal(true);
   };
 
-  const handleUpdate = () => {
-    setItems(items.map(i => i.id === editItem.id ? { ...newItem, price: Number(newItem.price), stock: Number(newItem.stock) } : i));
+  const handleUpdate = async () => {
+    const updatedItem = { ...newItem, price: Number(newItem.price), stock: Number(newItem.stock) };
+    setItems(items.map(i => i.id === editItem.id ? updatedItem : i));
     setEditItem(null);
     setNewItem({ name: '', category: 'Loaded Fries', price: '', stock: '', description: '', image: '', isVeg: true });
     setShowAddModal(false);
+    // Save updated item to Firebase
+    await CoupleDB.saveProduct(updatedItem);
+    console.log('✅ Item updated and saved to Firebase:', updatedItem.name, '₹' + updatedItem.price);
   };
 
   return (

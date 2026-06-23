@@ -1,13 +1,15 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FiPlus, FiMinus, FiTrash2, FiPrinter, FiSend, FiUser, FiPhone, FiWifiOff } from 'react-icons/fi';
 import { useOrders } from '../context/OrderContext';
 import useNetworkStatus from '../hooks/useNetworkStatus';
-import menuItems, { categories } from '../data/menuItems';
+import menuItemsDefault, { categories } from '../data/menuItems';
+import { CoupleDB } from '../firebase';
 import './Billing.css';
 
 const Billing = () => {
   const { addOrder } = useOrders();
   const { isOnline } = useNetworkStatus();
+  const [menuItems, setMenuItems] = useState(menuItemsDefault);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [cart, setCart] = useState([]);
   const [customerName, setCustomerName] = useState('');
@@ -20,6 +22,36 @@ const Billing = () => {
   const [showOfflinePopup, setShowOfflinePopup] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const billNoRef = useRef(null);
+
+  // Load menu from Firebase (updated prices) on mount
+  useEffect(() => {
+    const loadMenu = async () => {
+      try {
+        const savedProducts = await CoupleDB.getAllProducts();
+        if (savedProducts.length > 0) {
+          const savedMap = {};
+          savedProducts.forEach(p => { savedMap[p.id] = p; });
+          
+          // Merge saved Firebase data with defaults
+          const mergedItems = menuItemsDefault.map(defaultItem => {
+            if (savedMap[defaultItem.id]) {
+              return { ...defaultItem, ...savedMap[defaultItem.id] };
+            }
+            return defaultItem;
+          });
+          
+          // Add custom items
+          const defaultIds = new Set(menuItemsDefault.map(i => i.id));
+          const customItems = savedProducts.filter(p => !defaultIds.has(p.id));
+          
+          setMenuItems([...mergedItems, ...customItems]);
+        }
+      } catch (error) {
+        console.error('Error loading menu:', error);
+      }
+    };
+    loadMenu();
+  }, []);
 
   const filteredItems = menuItems.filter(item => {
     const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
