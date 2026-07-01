@@ -1,10 +1,11 @@
-import React from 'react';
-import { FiDollarSign, FiShoppingBag, FiCreditCard, FiSmartphone, FiTrendingUp, FiAlertTriangle } from 'react-icons/fi';
+import React, { useState } from 'react';
+import { FiDollarSign, FiShoppingBag, FiCreditCard, FiSmartphone, FiTrendingUp, FiAlertTriangle, FiX, FiUser, FiPhone, FiClock, FiHash } from 'react-icons/fi';
 import { useOrders } from '../context/OrderContext';
 import './Dashboard.css';
 
 const Dashboard = () => {
   const { getTodayOrders, getTodaySales, getTodayCash, getTodayUPI, getTodayCard, getTopSellingItem, getRecentOrders } = useOrders();
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const todayOrders = getTodayOrders();
   const todaySales = getTodaySales();
@@ -164,7 +165,15 @@ const Dashboard = () => {
                 <tbody>
                   {recentOrders.map((order, index) => (
                     <tr key={index}>
-                      <td><strong>{order.billNo}</strong></td>
+                      <td>
+                        <strong 
+                          className="order-id-link" 
+                          onClick={() => setSelectedOrder(order)}
+                          title="Click to view order details"
+                        >
+                          {order.billNo}
+                        </strong>
+                      </td>
                       <td>{order.customerName}</td>
                       <td>{order.items.length} items</td>
                       <td><strong>₹{order.total}</strong></td>
@@ -186,6 +195,70 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Order Detail Modal */}
+      {selectedOrder && (
+        <div className="modal-overlay" onClick={() => setSelectedOrder(null)}>
+          <div className="order-detail-modal" onClick={e => e.stopPropagation()}>
+            <button className="order-detail-close" onClick={() => setSelectedOrder(null)}>
+              <FiX />
+            </button>
+            
+            <div className="order-detail-header">
+              <div className="order-detail-badge">
+                <FiHash />
+                <span>{selectedOrder.billNo}</span>
+              </div>
+              <div className="order-detail-meta">
+                <span className={`badge ${selectedOrder.paymentMethod === 'UPI' ? 'badge-success' : selectedOrder.paymentMethod === 'Card' ? 'badge-warning' : 'badge-veg'}`}>
+                  {selectedOrder.paymentMethod}
+                </span>
+                <span className="order-detail-time">
+                  <FiClock /> {new Date(selectedOrder.createdAt).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'})} • {new Date(selectedOrder.createdAt).toLocaleTimeString('en-IN', {hour: '2-digit', minute: '2-digit'})}
+                </span>
+              </div>
+            </div>
+
+            <div className="order-detail-customer">
+              <div className="order-detail-customer-info">
+                <FiUser />
+                <span>{selectedOrder.customerName}</span>
+              </div>
+              {selectedOrder.customerMobile && (
+                <div className="order-detail-customer-info">
+                  <FiPhone />
+                  <span>{selectedOrder.customerMobile}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="order-detail-items">
+              <h4>Order Items</h4>
+              <div className="order-detail-items-list">
+                <div className="order-detail-item-row header">
+                  <span className="item-name-col">Item</span>
+                  <span className="item-qty-col">Qty</span>
+                  <span className="item-price-col">Price</span>
+                  <span className="item-total-col">Subtotal</span>
+                </div>
+                {selectedOrder.items.map((item, idx) => (
+                  <div className="order-detail-item-row" key={idx}>
+                    <span className="item-name-col">{item.name}</span>
+                    <span className="item-qty-col">x{item.qty}</span>
+                    <span className="item-price-col">₹{item.price}</span>
+                    <span className="item-total-col">₹{item.price * item.qty}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="order-detail-total">
+              <span>Total Amount</span>
+              <span className="order-detail-total-value">₹{selectedOrder.total}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
